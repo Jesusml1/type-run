@@ -118,6 +118,31 @@ class UI {
         acc.innerHTML = `${Checker.countAcc()}%`;
     }
 
+    static displayWPM() {
+
+        let intervals = JSON.parse(document.querySelector("#wpm").dataset.words);
+        intervals.unshift(Checker.currentBank().length);
+        console.log(intervals);
+        let avg = intervals.map( (a, i, n) => (a - (n[i + 1])) * 10 ).filter(n => (!isNaN(n))).reduce((total, amount, index, array) => {
+            total += amount;
+            if(index === array.length - 1) { 
+              return total/array.length;
+            } else { 
+              return total;
+            }
+          });
+
+        avg = Math.round(avg);
+        console.log("Aqui el promedio", avg);
+        document.querySelector("#wpm-value").innerHTML = `${avg}`;
+        this.clearWpmDataset();
+        
+    }
+
+    static clearWpmDataset() {
+        document.querySelector("#wpm").dataset.words = JSON.stringify([]);
+    }
+
 }
 
 // SPELL CHECKER
@@ -254,7 +279,7 @@ const Timer = (n1, n2) => {
     } else if (n1 == 1) {
 
         clearInterval(timer);
-        // console.log("time-stoped");
+        console.log("time-stoped");
 
     }
 }
@@ -287,6 +312,7 @@ input.addEventListener('keypress', (event) => {
                 Checker.colorWord("purple", currentInFixed + 1);
             } catch (TypeError) {
                 UI.displayACC();
+                UI.displayWPM();
                 Timer(labelBank.length, currentBank.length);
                 console.log("clear");
             }
@@ -302,6 +328,7 @@ input.addEventListener('keypress', (event) => {
                 Checker.colorWord("purple", currentInFixed + 1);
             } catch (TypeError) {
                 UI.displayACC();
+                UI.displayWPM();
                 Timer(labelBank.length, currentBank.length);
                 console.log("clear");
             }
@@ -329,6 +356,7 @@ redo.addEventListener("click", (event) => {
     const actualMode = document.querySelector("#mode-selector").value; 
     UI.clearDisplay();
     UI.displayWords(actualMode);
+    UI.clearWpmDataset();
     Checker.storeActualBank();
     Checker.colorWord("purple");
 
