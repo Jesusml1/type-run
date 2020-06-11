@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='icon/teclado.ico') }}">
+  <title>Type-run</title>
+</head>
+
+<body>
+  <div id="wrapper">
+
+    <!-- <div id="title">Title</div> -->
+
+    <div id="app-container">
+
+      <div id="mode-selector-wrapper">
+        <select name="Mode" id="mode-selector">
+          <option selected>Pick a mode</option>
+          <option value="30-words">30 words</option>
+          <option value="50-words">50 words</option>
+          <option value="100-words">100 words</option>
+        </select>
+      </div>
+
+      <div id="wpm-wrapper">
+        <label id="wpm" data-words="[0]" for="wpm">WPM: <var id="wpm-value">---</var></label>
+      </div>
+
+      <div id="acc-wrapper">
+        <label for="acc">ACC: <var id="acc-value">---</var></label>
+      </div>
+
+      <div id="word-bank-wrapper">
+        
+
+      </div>
+
+      <div id="input-wrapper">
+        <input id="input" type="text">
+      </div>
+
+      <div id="redo-buttom-wrapper">
+        <button id="redo-buttom" type="button">Redo</button>
+      </div>
+      
+      <label id="label" class="hidden"></label>
+    </div>
+  </div>
+
+
+  
+  <script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript" charset="utf-8" async defer></script>
+
+</body>
+
+</html>
