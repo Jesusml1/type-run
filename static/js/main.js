@@ -143,6 +143,12 @@ class UI {
         document.querySelector("#wpm").dataset.words = JSON.stringify([]);
     }
 
+
+    static toggleInputColor( color ) {
+        const input = document.querySelector("input");
+        input.style.backgroundColor = `${color}`;
+    }
+
 }
 
 // SPELL CHECKER
@@ -337,12 +343,39 @@ input.addEventListener('keypress', (event) => {
         }
         
         
+    } else if(event.keycode == 8) {
+
+        let capture = document.querySelector("#input").value;
+        capture = capture.trim();
+        let actual = Checker.getActualBank()[0];
+        let wordString = actual.slice(0, capture.length);
+        
+        console.log(capture, wordString);
+        
+        if (wordString == capture) {
+            UI.toggleInputColor("beige");
+        } else if (wordString != capture) {
+            UI.toggleInputColor("LightCoral");
+        }
+
     } else {
 
-        // console.log(event.key);
+        let capture = document.querySelector("#input").value;
+        capture = capture.trim();
+        let actual = Checker.getActualBank()[0];
+        let wordString = actual.slice(0, capture.length);
+
+        console.log(capture, wordString);
+        
+        if (wordString == capture) {
+            UI.toggleInputColor("beige");
+        } else if (wordString != capture) {
+            UI.toggleInputColor("LightCoral");
+        }
 
     }
 
+    // console.log(event);
     // console.log(document.querySelector("#label"));
      
 });
