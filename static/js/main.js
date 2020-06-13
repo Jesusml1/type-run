@@ -145,7 +145,7 @@ class UI {
 
 
     static toggleInputColor( color ) {
-        const input = document.querySelector("input");
+        const input = document.querySelector("#input");
         input.style.backgroundColor = `${color}`;
     }
 
@@ -282,7 +282,7 @@ const Timer = (n1, n2) => {
 
         timer = setInterval(() => Checker.wpm(), 10000);
 
-    } else if (n1 == 1) {
+    } else if (n1 == 1 && n2 == 0) {
 
         clearInterval(timer);
         console.log("time-stoped");
@@ -300,82 +300,89 @@ input.addEventListener('keypress', (event) => {
     let currentBank = Checker.currentBank();
     let labelBank = Checker.getActualBank();
 
-    if(event.code == "Space"){
+    switch(event.code){
 
-        Timer(labelBank.length, currentBank.length);
-        let capture = document.querySelector("#input").value;
-        if (capture == " " || capture == "") {
+        case ("Space"):
 
-            UI.clearInput();
-            
-        } else if(capture != " " && capture.trim().toLowerCase() == labelBank[0]){
+            Timer(labelBank.length, currentBank.length);
+            let capture = document.querySelector("#input").value;
+            if (capture == " " || capture == "") {
 
-            try{
-                let currentInFixed = currentBank.indexOf(capture.trim().toLowerCase()) + 1;
-                Checker.colorWord("green", currentInFixed);
                 UI.clearInput();
-                Checker.shiftAtualBank();
-                Checker.colorWord("purple", currentInFixed + 1);
-            } catch (TypeError) {
-                UI.displayACC();
-                UI.displayWPM();
-                Timer(labelBank.length, currentBank.length);
-                console.log("clear");
+                
+            } else if(capture != " " && capture.trim().toLowerCase() == labelBank[0]){
+
+                try{
+                    let currentInFixed = currentBank.indexOf(capture.trim().toLowerCase()) + 1;
+                    Checker.colorWord("green", currentInFixed);
+                    UI.clearInput();
+                    Checker.shiftAtualBank();
+                    Checker.colorWord("purple", currentInFixed + 1);
+                } catch (TypeError) {
+                    UI.displayACC();
+                    UI.displayWPM();
+                    //Timer(labelBank.length, currentBank.length);
+                    Timer(1,0)
+                    console.log("clear");
+                }
+                
+
+            } else if(capture != " " && capture.trim().toLowerCase() != labelBank[0]) {
+
+                try{
+                    let currentInFixed = currentBank.indexOf(labelBank[0]) + 1;
+                    Checker.colorWord("red", currentInFixed);
+                    UI.clearInput();
+                    Checker.shiftAtualBank();
+                    Checker.colorWord("purple", currentInFixed + 1);
+                } catch (TypeError) {
+                    UI.displayACC();
+                    UI.displayWPM();
+                    //Timer(labelBank.length, currentBank.length);
+                    Timer(1,0)
+                    console.log("clear");
+                } 
+
             }
+
+            break;
+
+        // case ("Backspace"):
+    
+        //     let capture = document.querySelector("#input").value;
+        //     capture = capture.trim();
+        //     let actual = Checker.getActualBank()[0];
+        //     let wordString = actual.slice(0, capture.length);
             
+        //     console.log(capture, wordString);
+            
+        //     if (wordString == capture) {
+        //         UI.toggleInputColor("beige");
+        //     } else if (wordString != capture) {
+        //         UI.toggleInputColor("LightCoral");
+        //     }
+        //     break;
+        
+        default: // Any other letter
 
-        } else if(capture != " " && capture.trim().toLowerCase() != labelBank[0]) {
-
-            try{
-                let currentInFixed = currentBank.indexOf(labelBank[0]) + 1;
-                Checker.colorWord("red", currentInFixed);
-                UI.clearInput();
-                Checker.shiftAtualBank();
-                Checker.colorWord("purple", currentInFixed + 1);
-            } catch (TypeError) {
-                UI.displayACC();
-                UI.displayWPM();
-                Timer(labelBank.length, currentBank.length);
-                console.log("clear");
+            let input = event.key;
+            let currentLength = document.querySelector("#input").value.trim().length;
+            let currentWord = Checker.getActualBank()[0];
+            
+            console.table(input, currentWord[currentLength]);
+        
+            if (input == currentWord[currentLength]) {
+                UI.toggleInputColor("beige");
+            } else {
+                UI.toggleInputColor("LightCoral");
             }
-            
 
-        }
-        
-        
-    } else if(event.keycode == 8) {
+            break;
+    
 
-        let capture = document.querySelector("#input").value;
-        capture = capture.trim();
-        let actual = Checker.getActualBank()[0];
-        let wordString = actual.slice(0, capture.length);
-        
-        console.log(capture, wordString);
-        
-        if (wordString == capture) {
-            UI.toggleInputColor("beige");
-        } else if (wordString != capture) {
-            UI.toggleInputColor("LightCoral");
-        }
-
-    } else {
-
-        let capture = document.querySelector("#input").value;
-        capture = capture.trim();
-        let actual = Checker.getActualBank()[0];
-        let wordString = actual.slice(0, capture.length);
-
-        console.log(capture, wordString);
-        
-        if (wordString == capture) {
-            UI.toggleInputColor("beige");
-        } else if (wordString != capture) {
-            UI.toggleInputColor("LightCoral");
-        }
-
-    }
-
-    // console.log(event);
+    }       
+    
+    console.log("Letter: ",event.key);
     // console.log(document.querySelector("#label"));
      
 });
@@ -390,6 +397,8 @@ redo.addEventListener("click", (event) => {
     UI.clearDisplay();
     UI.displayWords(actualMode);
     UI.clearWpmDataset();
+    UI.clearInput();
+    Timer(1, 0);
     Checker.storeActualBank();
     Checker.colorWord("purple");
 
