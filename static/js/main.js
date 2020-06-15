@@ -35,7 +35,13 @@ const sample = ["we", "very", "after", "interest", "new", "open", "follow",
                 "mean", "another"];
 
 
+// Words color
 
+const wrongly_spelled_color = "FireBrick";
+const correctly_spelled_color = "ForestGreen";
+const current_word_color = "DarkMagenta";
+const normal_input_color = "#999999";
+const checkSpell_input_color = "LightCoral";
 
 const getRandomInt = (max) => (Math.floor(Math.random() * Math.floor(max)));
 
@@ -229,9 +235,10 @@ class Checker{
         let result = "";
         
         for (let i = 0; i < bankSize; i++) {
-            if(document.querySelector("#word-bank-wrapper").children[i].style["color"] == "green"){
+            if(document.querySelector("#word-bank-wrapper").children[i].style["color"] == correctly_spelled_color.toLowerCase()){
                 correct += 1;
             }
+            console.log(correct);
         }
         
         x = (correct * 100) / bankSize;
@@ -268,6 +275,7 @@ const selector = document.querySelector("#mode-selector").addEventListener("chan
     UI.displayWords(event.target.value);
     Checker.storeActualBank();
     document.querySelector(`#word-bank-wrapper pre:nth-child(1)`).setAttribute("style", "color: purple;");
+    document.querySelector("#input").focus();
       
 });
 
@@ -314,10 +322,10 @@ input.addEventListener('keypress', (event) => {
 
                 try{
                     let currentInFixed = currentBank.indexOf(capture.trim().toLowerCase()) + 1;
-                    Checker.colorWord("green", currentInFixed);
+                    Checker.colorWord(correctly_spelled_color, currentInFixed);
                     UI.clearInput();
                     Checker.shiftAtualBank();
-                    Checker.colorWord("purple", currentInFixed + 1);
+                    Checker.colorWord(current_word_color, currentInFixed + 1);
                 } catch (TypeError) {
                     UI.displayACC();
                     UI.displayWPM();
@@ -331,10 +339,10 @@ input.addEventListener('keypress', (event) => {
 
                 try{
                     let currentInFixed = currentBank.indexOf(labelBank[0]) + 1;
-                    Checker.colorWord("red", currentInFixed);
+                    Checker.colorWord(wrongly_spelled_color, currentInFixed);
                     UI.clearInput();
                     Checker.shiftAtualBank();
-                    Checker.colorWord("purple", currentInFixed + 1);
+                    Checker.colorWord(current_word_color, currentInFixed + 1);
                 } catch (TypeError) {
                     UI.displayACC();
                     UI.displayWPM();
@@ -347,23 +355,23 @@ input.addEventListener('keypress', (event) => {
 
             break;
 
-        // case ("Backspace"):
+        case ("Backspace"):
     
-        //     let capture = document.querySelector("#input").value;
-        //     capture = capture.trim();
-        //     let actual = Checker.getActualBank()[0];
-        //     let wordString = actual.slice(0, capture.length);
+            let captureLeave = document.querySelector("#input").value;
+            captureLeave = captureLeave.trim();
+            let actual = Checker.getActualBank()[0];
+            let wordString = actual.slice(0, captureLeave.length);
             
-        //     console.log(capture, wordString);
+            console.log(captureLeave, wordString);
             
-        //     if (wordString == capture) {
-        //         UI.toggleInputColor("beige");
-        //     } else if (wordString != capture) {
-        //         UI.toggleInputColor("LightCoral");
-        //     }
-        //     break;
+            if (wordString == captureLeave) {
+                UI.toggleInputColor(normal_input_color);
+            } else if (wordString != captureLeave) {
+                UI.toggleInputColor(checkSpell_input_color);
+            }
+            break;
         
-        default: // Any other letter
+        default: // Any other key
 
             let input = event.key;
             let currentLength = document.querySelector("#input").value.trim().length;
@@ -372,9 +380,9 @@ input.addEventListener('keypress', (event) => {
             console.table(input, currentWord[currentLength]);
         
             if (input == currentWord[currentLength]) {
-                UI.toggleInputColor("beige");
+                UI.toggleInputColor(normal_input_color);
             } else {
-                UI.toggleInputColor("LightCoral");
+                UI.toggleInputColor(checkSpell_input_color);
             }
 
             break;
