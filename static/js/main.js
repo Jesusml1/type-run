@@ -35,18 +35,17 @@ const sample = ["we", "very", "after", "interest", "new", "open", "follow",
                 "mean", "another"];
 
 
-// Words color
+// WORDS COLOR
 
 const wrongly_spelled_color = "FireBrick";
 const correctly_spelled_color = "ForestGreen";
 const current_word_color = "DarkMagenta";
-const normal_input_color = "#999999";
-const checkSpell_input_color = "LightCoral";
+const normal_input_color = "rgb(255, 255, 255)";
+const checkSpell_input_color = "#f8c4c4";
 
 const getRandomInt = (max) => (Math.floor(Math.random() * Math.floor(max)));
-
-
 const wordWrapper = "word-bank-wrapper";
+
 
 // BANKWORD 
 
@@ -60,7 +59,6 @@ class BankWord {
                     words.push(toAdd);
                 }
         }
-        //console.log(array.length);
         return words;
     }
 
@@ -128,7 +126,6 @@ class UI {
 
         let intervals = JSON.parse(document.querySelector("#wpm").dataset.words);
         intervals.unshift(Checker.currentBank().length);
-        console.log(intervals);
         let avg = intervals.map( (a, i, n) => (a - (n[i + 1])) * 10 ).filter(n => (!isNaN(n))).reduce((total, amount, index, array) => {
             total += amount;
             if(index === array.length - 1) { 
@@ -139,7 +136,7 @@ class UI {
           });
 
         avg = Math.round(avg);
-        console.log("Aqui el promedio", avg);
+        console.log("Avg: ", avg);
         document.querySelector("#wpm-value").innerHTML = `${avg}`;
         this.clearWpmDataset();
         
@@ -156,6 +153,7 @@ class UI {
     }
 
 }
+
 
 // SPELL CHECKER
 
@@ -175,17 +173,13 @@ class Checker{
     static storeActualBank = () => {
     
         let toStore = JSON.stringify(Checker.currentBank());
-        // let string = toStore.toString();
-        console.log(document.querySelector("#label"));
         document.querySelector("#label").textContent = toStore;
         
     }
 
     static getActualBank = () => {
         let mydata = document.querySelector("#label").innerHTML;
-        //console.log(mydata);
         let myArray = mydata.split(" ");
-        // console.log(myarray);
         return JSON.parse(myArray.shift());
     }
 
@@ -238,7 +232,7 @@ class Checker{
             if(document.querySelector("#word-bank-wrapper").children[i].style["color"] == correctly_spelled_color.toLowerCase()){
                 correct += 1;
             }
-            console.log(correct);
+            
         }
         
         x = (correct * 100) / bankSize;
@@ -249,22 +243,21 @@ class Checker{
     static wpm () {
 
         let dataset = JSON.parse(document.querySelector("#wpm").dataset.words)
-        console.log(dataset);
         let toPush = this.getActualBank().length;
-        console.log(toPush);
         dataset.push(toPush);
         document.querySelector("#wpm").dataset.words = JSON.stringify(dataset);
 
+    }
+
+    static getInput() {
+        const input = document.querySelector("#input").value;
+        return input;
     }
 
     
 
 
 }
-
-
-
-
 
 
 // SELECTING MODE EVENT
@@ -293,7 +286,7 @@ const Timer = (n1, n2) => {
     } else if (n1 == 1 && n2 == 0) {
 
         clearInterval(timer);
-        console.log("time-stoped");
+        
 
     }
 }
@@ -320,33 +313,37 @@ input.addEventListener('keydown', (event) => {
                 
             } else if(capture != " " && capture.trim().toLowerCase() == labelBank[0]){
 
-                try{
+                try {
+
                     let currentInFixed = currentBank.indexOf(capture.trim().toLowerCase()) + 1;
                     Checker.colorWord(correctly_spelled_color, currentInFixed);
                     UI.clearInput();
                     Checker.shiftAtualBank();
                     Checker.colorWord(current_word_color, currentInFixed + 1);
+
                 } catch (TypeError) {
+
                     UI.displayACC();
                     UI.displayWPM();
-                    //Timer(labelBank.length, currentBank.length);
                     Timer(1,0)
-                    console.log("clear");
+                    console.log("Round finished");
                 }
                 
 
             } else if(capture != " " && capture.trim().toLowerCase() != labelBank[0]) {
 
                 try{
+
                     let currentInFixed = currentBank.indexOf(labelBank[0]) + 1;
                     Checker.colorWord(wrongly_spelled_color, currentInFixed);
                     UI.clearInput();
                     Checker.shiftAtualBank();
                     Checker.colorWord(current_word_color, currentInFixed + 1);
+
                 } catch (TypeError) {
+
                     UI.displayACC();
                     UI.displayWPM();
-                    //Timer(labelBank.length, currentBank.length);
                     Timer(1,0)
                     console.log("clear");
                 } 
@@ -357,16 +354,14 @@ input.addEventListener('keydown', (event) => {
 
         case ("Backspace"):
     
-            let captureLeave = document.querySelector("#input").value;
-            captureLeave = captureLeave.trim();
+            let captureBehind = Checker.getInput();
+            captureBehind = captureBehind.trim().slice(0, captureBehind.length - 1);
             let actual = Checker.getActualBank()[0];
-            let wordString = actual.slice(0, captureLeave.length);
+            let wordString = actual.slice(0, captureBehind.length);
             
-            console.log(event);
-            
-            if (wordString == captureLeave) {
+            if (wordString == captureBehind) {
                 UI.toggleInputColor(normal_input_color);
-            } else if (wordString != captureLeave) {
+            } else if (wordString != captureBehind) {
                 UI.toggleInputColor(checkSpell_input_color);
             }
             break;
@@ -376,8 +371,6 @@ input.addEventListener('keydown', (event) => {
             let input = event.key;
             let currentLength = document.querySelector("#input").value.trim().length;
             let currentWord = Checker.getActualBank()[0];
-            
-            console.table(input, currentWord[currentLength]);
         
             if (input == currentWord[currentLength]) {
                 UI.toggleInputColor(normal_input_color);
@@ -390,8 +383,6 @@ input.addEventListener('keydown', (event) => {
 
     }       
     
-    console.log("Letter: ",event.key);
-    // console.log(document.querySelector("#label"));
      
 });
 
@@ -406,8 +397,10 @@ redo.addEventListener("click", (event) => {
     UI.displayWords(actualMode);
     UI.clearWpmDataset();
     UI.clearInput();
+    UI.toggleInputColor(normal_input_color);
     Timer(1, 0);
     Checker.storeActualBank();
     Checker.colorWord("purple");
+    document.querySelector("#input").focus();
 
 });
