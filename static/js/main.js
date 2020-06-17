@@ -303,7 +303,7 @@ const Timer = (n1, n2) => {
 // TYPING EVENT
 
 const input = document.querySelector("#input");
-input.addEventListener('keypress', (event) => {
+input.addEventListener('keydown', (event) => {
 
     let currentBank = Checker.currentBank();
     let labelBank = Checker.getActualBank();
@@ -362,7 +362,7 @@ input.addEventListener('keypress', (event) => {
             let actual = Checker.getActualBank()[0];
             let wordString = actual.slice(0, captureLeave.length);
             
-            console.log(captureLeave, wordString);
+            console.log(event);
             
             if (wordString == captureLeave) {
                 UI.toggleInputColor(normal_input_color);
